@@ -1,41 +1,31 @@
-"use client";
 
 import contentfulClient from "@/contentful/contentfulClient";
 import {
   IContentfulAsset,
   TypeAboutBlogSkeleton,
 } from "@/contentful/types/article.types";
-
 import Image from "next/image";
-import { useEffect, useState } from "react";
 
-export default function AboutPage() {
-  const [profile, setProfile] = useState<any>(null);
+export default async function AboutPage() {
+  let profile = null;
 
-  const fetchProfile = async () => {
-    try {
-      const data = await contentfulClient.getEntries<TypeAboutBlogSkeleton>({
-        content_type: "aboutBlog",
-        limit: 1,
-      });
+  try {
+    const data = await contentfulClient.getEntries<TypeAboutBlogSkeleton>({
+      content_type: "aboutBlog",
+      limit: 1,
+    });
 
-      setProfile(data.items[0]?.fields || null);
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
+    profile = data.items[0]?.fields || null;
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+  }
 
   return (
     <div className="container mx-auto px-6 py-20">
       <section className="mb-16">
         <h1 className="text-4xl font-bold text-center mb-8">About This Blog</h1>
         <div className="prose max-w-none text-gray-700 mx-auto text-justify">
-          <p>{profile.description || "No description available"}</p>
+          <p>{profile?.description || "No description available"}</p>
         </div>
       </section>
 
@@ -43,20 +33,22 @@ export default function AboutPage() {
         <h2 className="text-3xl font-bold text-center mb-8">Meet the Author</h2>
         <div className="flex flex-wrap justify-center gap-8">
           <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 w-80">
-            <Image
-              src={`https:${
-                (profile.image as IContentfulAsset)?.fields?.file?.url || ""
-              }`}
-              alt={profile.name || "Author Name"}
-              width={120}
-              height={120}
-              className="rounded-full mb-4"
-            />
+            {profile?.image && (
+              <Image
+                src={`https:${
+                  (profile.image as IContentfulAsset)?.fields?.file?.url
+                }`}
+                alt={profile?.name || "Author Name"}
+                width={120}
+                height={120}
+                className="rounded-full mb-4"
+              />
+            )}
             <h3 className="text-xl font-semibold mb-2">
-              {profile.name || "Unknown Author"}
+              {profile?.name || "Unknown Author"}
             </h3>
             <p className="text-sm text-gray-600 text-justify">
-              {profile.summary || "No summary available"}
+              {profile?.profileSummary || "No summary available"}
             </p>
           </div>
         </div>
@@ -67,7 +59,7 @@ export default function AboutPage() {
           Our Mission & Vision
         </h2>
         <div className="prose max-w-none text-gray-700 mx-auto text-justify">
-          <p>{profile.visiMisi || "No mission and vision available"}</p>
+          <p>{profile?.visiMisi || "No mission and vision available"}</p>
         </div>
       </section>
 

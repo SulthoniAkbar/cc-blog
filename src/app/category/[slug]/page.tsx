@@ -6,7 +6,6 @@ import {
   TypeCategoryArticleSkeleton,
 } from "@/contentful/types/article.types";
 
-// Fungsi untuk mengambil artikel
 const fetchArticles = async () => {
   try {
     const data = await contentfulClient.getEntries<TypeArticleSkeleton>({
@@ -19,7 +18,6 @@ const fetchArticles = async () => {
   }
 };
 
-// Fungsi untuk mengambil kategori berdasarkan slug
 const fetchCategoryBySlug = async (slug: string) => {
   try {
     const data = await contentfulClient.getEntries<TypeCategoryArticleSkeleton>(
@@ -36,21 +34,16 @@ const fetchCategoryBySlug = async (slug: string) => {
   }
 };
 
-// Tipe untuk params
 type Params = Promise<{ slug: string }>;
 
-// Halaman Kategori
 export default async function CategoryPage({ params }: { params: Params }) {
-  // Resolve params dan ambil slug
   const { slug } = await params;
 
-  // Ambil data artikel dan kategori secara bersamaan
   const [articles, category] = await Promise.all([
     fetchArticles(),
     fetchCategoryBySlug(slug),
   ]);
 
-  // Jika kategori tidak ditemukan
   if (!category) {
     return (
       <div className="px-8 py-20">
@@ -61,12 +54,10 @@ export default async function CategoryPage({ params }: { params: Params }) {
     );
   }
 
-  // Filter artikel berdasarkan kategori
   const filteredArticles = articles.filter((article) =>
     article.fields.category.some((cat) => cat.sys.id === category.sys.id)
   );
 
-  // Render halaman
   return (
     <div className="px-8 py-20">
       <h1 className="text-3xl font-bold mb-6 capitalize">
@@ -81,7 +72,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
             }`}
             title={article.fields.name}
             summary={article.fields.summary}
-            date={article.fields.publishedDate || "Unknown Date"}
+            date={article.fields.publishedDate}
             rating={article.fields.rating}
           />
         ))}
