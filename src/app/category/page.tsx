@@ -16,7 +16,7 @@ const getCategory = async () => {
     return data;
   } catch (err) {
     console.error(err);
-    return null; // Pastikan mengembalikan null jika terjadi error
+    return null;
   }
 };
 

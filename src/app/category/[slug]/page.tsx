@@ -34,13 +34,22 @@ const fetchCategoryBySlug = async (slug: string) => {
   }
 };
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const articles = await fetchArticles();
-  const category = await fetchCategoryBySlug(params.slug);
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+// Updated function
+export default async function CategoryPage(context: PageProps) {
+  const params = await context.params; // Await params if necessary
+  const { slug } = params;
+
+  // Concurrent fetching
+  const [articles, category] = await Promise.all([
+    fetchArticles(),
+    fetchCategoryBySlug(slug),
+  ]);
 
   const filteredArticles = articles.filter((article) =>
     article.fields.category.some((cat: any) => cat.sys.id === category?.sys.id)
