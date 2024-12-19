@@ -68,7 +68,7 @@ export default function Article() {
     <div className="w-full px-4 py-8">
       {article && (
         <div className="bg-white shadow-lg rounded-lg">
-          {/* Hero Image Section */}
+
           <div className="relative w-full h-[500px] rounded-t-lg overflow-hidden">
             <Image
               src={`https:${
@@ -80,7 +80,7 @@ export default function Article() {
             />
           </div>
 
-          {/* Article Content Section */}
+  
           <div className="p-3 max-w-7xl mx-auto">
             <h1 className="text-5xl font-bold text-gray-900 mb-6 text-center">
               {article.name}
