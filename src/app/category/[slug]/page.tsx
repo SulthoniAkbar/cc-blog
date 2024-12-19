@@ -40,25 +40,35 @@ interface PageProps {
   };
 }
 
-// Updated function
-export default async function CategoryPage(context: PageProps) {
-  const params = await context.params; // Await params if necessary
+export default async function CategoryPage({ params }: PageProps) {
   const { slug } = params;
 
-  // Concurrent fetching
+  // Fetch articles and category concurrently
   const [articles, category] = await Promise.all([
     fetchArticles(),
     fetchCategoryBySlug(slug),
   ]);
 
+  // Handle cases where category is not found
+  if (!category) {
+    return (
+      <div className="px-8 py-20">
+        <h1 className="text-3xl font-bold mb-6 capitalize">
+          Category not found
+        </h1>
+      </div>
+    );
+  }
+
+  // Filter articles based on the category
   const filteredArticles = articles.filter((article) =>
-    article.fields.category.some((cat: any) => cat.sys.id === category?.sys.id)
+    article.fields.category.some((cat) => cat.sys.id === category.sys.id)
   );
 
   return (
     <div className="px-8 py-20">
       <h1 className="text-3xl font-bold mb-6 capitalize">
-        Articles in {category?.fields.name}
+        Articles in {category.fields.name}
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {filteredArticles.map((article) => (
