@@ -6,6 +6,7 @@ import {
   TypeCategoryArticleSkeleton,
 } from "@/contentful/types/article.types";
 
+// Fetch all articles
 const fetchArticles = async () => {
   try {
     const data = await contentfulClient.getEntries<TypeArticleSkeleton>({
@@ -18,6 +19,7 @@ const fetchArticles = async () => {
   }
 };
 
+// Fetch category by slug
 const fetchCategoryBySlug = async (slug: string) => {
   try {
     const data = await contentfulClient.getEntries<TypeCategoryArticleSkeleton>(
@@ -34,6 +36,7 @@ const fetchCategoryBySlug = async (slug: string) => {
   }
 };
 
+// Define the type for props
 interface PageProps {
   params: {
     slug: string;
@@ -41,7 +44,8 @@ interface PageProps {
 }
 
 export default async function CategoryPage({ params }: PageProps) {
-  const { slug } = params;
+  const resolvedParams = await params; // Resolve the Promise
+  const { slug } = resolvedParams;
 
   // Fetch articles and category concurrently
   const [articles, category] = await Promise.all([
