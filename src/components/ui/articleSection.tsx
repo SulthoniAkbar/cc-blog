@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import contentfulClient from "@/contentful/contentfulClient";
 import {
   IContentfulAsset,
@@ -8,6 +5,7 @@ import {
 } from "@/contentful/types/article.types";
 import Link from "next/link";
 import CardArticle from "../data/card.article";
+import LoadMoreArticles from "./loadMoreArticles";
 
 const getArticles = async (skip: number, limit: number) => {
   try {
@@ -23,59 +21,60 @@ const getArticles = async (skip: number, limit: number) => {
   }
 };
 
-export default function ArticleSection() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-  const itemsPerPage = 6;
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      const skip = (currentPage - 1) * itemsPerPage;
-      const data = await getArticles(skip, itemsPerPage);
-
-      if (data) {
-        setArticles((prev) => [...prev, ...data.items]);
-        if (data.items.length < itemsPerPage) {
-          setHasMore(false);
-        }
-      }
-    };
-
-    fetchArticles();
-  }, [currentPage]);
-
-  const loadMore = () => {
-    setCurrentPage((prev) => prev + 1);
-  };
+export default async function ArticleSection() {
+  const initialData = await getArticles(0, 6);
+  const articles = initialData?.items ?? [];
+  const initialIds = articles.map((article) => article.sys.id);
+  const initialHasMore = articles.length === 6;
 
   return (
-    <div className="px-8 py-12">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {articles.map((article, idx) => (
-          <Link href={`article/${article.fields.slug}`} key={idx}>
-            <CardArticle
-              imageUrl={`https:${
-                (article.fields.image as IContentfulAsset).fields.file.url
-              }`}
-              title={article.fields.name}
-              summary={article.fields.summary}
-              date={article.fields.publishedDate || "Unknown Date"}
-              rating={article.fields.rating}
-            />
-          </Link>
-        ))}
+    <section id="latest" className="container mx-auto px-6 py-16">
+      <div className="mb-12 flex flex-col items-center text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          Latest Articles
+        </p>
+        <h2 className="mt-3 text-4xl font-semibold text-slate-900">
+          Cerita terbaru yang layak dibaca.
+        </h2>
+        <p className="mt-4 max-w-2xl text-base text-slate-600">
+          Kumpulan tulisan yang membahas perjalanan, ulasan destinasi, dan tips
+          praktis agar perjalanan terasa lebih ringan.
+        </p>
       </div>
-      {hasMore && (
-        <div className="flex justify-center mt-8">
-          <button
-            onClick={loadMore}
-            className="bg-blue-500 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-600 transition duration-300"
-          >
-            Load More
-          </button>
-        </div>
+
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {articles.map((article) => {
+          const slug = article.fields.slug;
+          if (!slug) return null;
+          const fields = article.fields as any;
+          return (
+            <Link href={`/article/${slug}`} key={article.sys.id}>
+              <CardArticle
+                imageUrl={`https:${
+                  (article.fields.image as IContentfulAsset).fields.file.url
+                }`}
+                title={article.fields.name}
+                summary={article.fields.summary}
+                author={fields.author}
+                date={article.fields.publishedDate || ""}
+                rating={article.fields.rating}
+              />
+            </Link>
+          );
+        })}
+      </div>
+      {articles.length === 0 && (
+        <p className="mt-10 text-center text-sm text-slate-600">
+          Belum ada artikel yang dipublikasikan.
+        </p>
       )}
-    </div>
+
+      <LoadMoreArticles
+        initialSkip={articles.length}
+        pageSize={6}
+        existingIds={initialIds}
+        initialHasMore={initialHasMore}
+      />
+    </section>
   );
 }

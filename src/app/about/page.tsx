@@ -1,10 +1,16 @@
-
 import contentfulClient from "@/contentful/contentfulClient";
 import {
   IContentfulAsset,
   TypeAboutBlogSkeleton,
 } from "@/contentful/types/article.types";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Kenali penulis dan misi di balik catatan perjalanan Sulthoni Akbar.",
+};
 
 export default async function AboutPage() {
   let profile = null;
@@ -22,60 +28,63 @@ export default async function AboutPage() {
 
   return (
     <div className="container mx-auto px-6 py-20">
-      <section className="mb-16">
-        <h1 className="text-4xl font-bold text-center mb-8">About This Blog</h1>
-        <div className="prose max-w-none text-gray-700 mx-auto text-justify">
-          <p>{profile?.description || "No description available"}</p>
-        </div>
+      <section className="mb-16 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          About the Blog
+        </p>
+        <h1 className="mt-3 text-4xl font-semibold text-slate-900">
+          Tentang catatan perjalanan ini.
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-slate-600">
+          {profile?.description || "No description available"}
+        </p>
       </section>
 
       <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">Meet the Author</h2>
-        <div className="flex flex-wrap justify-center gap-8">
-          <div className="flex flex-col items-center bg-white shadow-lg rounded-lg p-6 w-80">
-            {profile?.image && (
-              <Image
-                src={`https:${
-                  (profile.image as IContentfulAsset)?.fields?.file?.url
-                }`}
-                alt={profile?.name || "Author Name"}
-                width={120}
-                height={120}
-                className="rounded-full mb-4"
-              />
-            )}
-            <h3 className="text-xl font-semibold mb-2">
+        <div className="glass mx-auto flex max-w-3xl flex-col items-center gap-6 rounded-3xl p-8 text-center shadow-sm">
+          {profile?.image && (
+            <Image
+              src={`https:${
+                (profile.image as IContentfulAsset)?.fields?.file?.url
+              }`}
+              alt={profile?.name || "Author Name"}
+              width={140}
+              height={140}
+              className="rounded-full border-4 border-white shadow-md"
+            />
+          )}
+          <div>
+            <h2 className="text-2xl font-semibold text-slate-900">
               {profile?.name || "Unknown Author"}
-            </h3>
-            <p className="text-sm text-gray-600 text-justify">
+            </h2>
+            <p className="mt-2 text-sm text-slate-600">
               {profile?.profileSummary || "No summary available"}
             </p>
           </div>
         </div>
       </section>
 
-      <section className="mb-16">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Our Mission & Vision
-        </h2>
-        <div className="prose max-w-none text-gray-700 mx-auto text-justify">
-          <p>{profile?.visiMisi || "No mission and vision available"}</p>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-3xl font-bold text-center mb-8">Get in Touch</h2>
-        <div className="text-center">
-          <p className="text-gray-700 mb-4">
-            We’d love to hear from you! Whether you have questions, suggestions,
-            or simply want to connect, feel free to reach out.
+      <section className="mb-16 grid gap-8 lg:grid-cols-2">
+        <div className="rounded-3xl bg-white/80 p-8 shadow-sm">
+          <h3 className="text-2xl font-semibold text-slate-900">
+            Mission & Vision
+          </h3>
+          <p className="mt-4 text-sm text-slate-600">
+            {profile?.visiMisi || "No mission and vision available"}
           </p>
-          <div className="flex justify-center gap-6 text-gray-700">
+        </div>
+        <div className="rounded-3xl border border-slate-200/70 bg-white/60 p-8">
+          <h3 className="text-2xl font-semibold text-slate-900">Get in Touch</h3>
+          <p className="mt-4 text-sm text-slate-600">
+            We would love to hear from you. Kirim pesan, saran, atau ajak
+            kolaborasi lewat kanal berikut.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold text-slate-700">
             <a
               href="https://facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-500"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 transition hover:border-slate-300"
             >
               Facebook
             </a>
@@ -83,7 +92,7 @@ export default async function AboutPage() {
               href="https://twitter.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-blue-400"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 transition hover:border-slate-300"
             >
               Twitter
             </a>
@@ -91,12 +100,15 @@ export default async function AboutPage() {
               href="https://instagram.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-pink-500"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 transition hover:border-slate-300"
             >
               Instagram
             </a>
-            <a href="mailto:info@example.com" className="hover:text-blue-600">
-              Email Us
+            <a
+              href="mailto:info@example.com"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 transition hover:border-slate-300"
+            >
+              Email
             </a>
           </div>
         </div>

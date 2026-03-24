@@ -9,6 +9,16 @@ interface CardProps {
   rating?: number;
 }
 
+const formatDate = (value: string) => {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "Unknown date";
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(parsed);
+};
+
 // Render stars dynamically based on rating
 const renderStars = (rating: number | undefined) => {
   const stars = [];
@@ -35,33 +45,42 @@ export default function CardArticle({
   date,
   rating,
 }: CardProps) {
+  const formattedDate = formatDate(date);
+  const safeRating = rating || 0;
+
   return (
-    <div className="card bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105">
-      <div className="relative w-full h-48">
+    <article className="group h-full overflow-hidden rounded-3xl border border-slate-100 bg-white/90 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative h-52 w-full overflow-hidden">
         <Image
           src={imageUrl}
           alt={title}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-t-lg"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/35 via-transparent to-transparent opacity-0 transition group-hover:opacity-100"></div>
       </div>
       <div className="p-6">
-        <div className="text-gray-600 text-xs mb-2 flex justify-between items-center">
-          <span>{author}</span>
-          <span>{new Date(date).toLocaleDateString()}</span>
+        <div className="mb-3 flex flex-wrap items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          <span>{author || "Editorial Team"}</span>
+          <time dateTime={date}>{formattedDate}</time>
         </div>
 
-        <div className="flex items-center mb-3">{renderStars(rating)}</div>
+        <div
+          className="mb-3 flex items-center"
+          aria-label={`Rating ${safeRating} of 5`}
+        >
+          {renderStars(safeRating)}
+        </div>
 
-        <h2 className="text-lg font-bold text-gray-900 mb-3">{title}</h2>
-        <p className="text-sm text-gray-700 line-clamp-3">{summary}</p>
+        <h2 className="mb-3 text-xl font-semibold text-slate-900">{title}</h2>
+        <p className="text-sm text-slate-600 line-clamp-3">{summary}</p>
       </div>
-      <div className="px-6 pb-4">
-        <button className="text-blue-600 font-medium hover:underline">
-          View Post
-        </button>
+      <div className="px-6 pb-6">
+        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-700 transition group-hover:text-slate-900">
+          Read Article
+        </span>
       </div>
-    </div>
+    </article>
   );
 }
