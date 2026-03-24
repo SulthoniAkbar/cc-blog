@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Fraunces, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import NavbarComponent from "@/components/global/NavBar";
@@ -57,6 +58,9 @@ export const metadata: Metadata = {
     description:
       "Catatan perjalanan, ulasan, dan panduan praktis untuk menjelajah dengan lebih cerdas dan sederhana.",
   },
+  verification: {
+    google: "slh2TLv74HGKTRJN4aOnKHD_r-H_JdivUi2ImVyiGRc",
+  },
 };
 
 export default function RootLayout({
@@ -66,6 +70,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-5E6GFGL9LC"
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-5E6GFGL9LC');
+          `}
+        </Script>
+      </head>
       <body
         className={`${headingFont.variable} ${bodyFont.variable} antialiased`}
       >
