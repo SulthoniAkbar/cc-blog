@@ -37,14 +37,15 @@ const fetchCategoryBySlug = async (slug: string) => {
   }
 };
 
-type Params = { slug: string };
+type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({
   params,
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const category = await fetchCategoryBySlug(params.slug);
+  const { slug } = await params;
+  const category = await fetchCategoryBySlug(slug);
   if (!category) {
     return {
       title: "Category Not Found",
@@ -58,7 +59,7 @@ export async function generateMetadata({
 }
 
 export default async function CategoryPage({ params }: { params: Params }) {
-  const { slug } = params;
+  const { slug } = await params;
 
   const [articles, category] = await Promise.all([
     fetchArticles(),

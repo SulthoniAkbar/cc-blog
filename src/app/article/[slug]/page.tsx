@@ -39,14 +39,15 @@ const fetchArticleBySlug = async (slug: string) => {
   }
 };
 
-type Params = { slug: string };
+type Params = Promise<{ slug: string }>;
 
 export async function generateMetadata({
   params,
 }: {
   params: Params;
 }): Promise<Metadata> {
-  const article = await fetchArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await fetchArticleBySlug(slug);
   if (!article) {
     return {
       title: "Article Not Found",
@@ -77,7 +78,8 @@ export async function generateMetadata({
 }
 
 export default async function Article({ params }: { params: Params }) {
-  const article = await fetchArticleBySlug(params.slug);
+  const { slug } = await params;
+  const article = await fetchArticleBySlug(slug);
 
   if (!article) {
     notFound();
@@ -85,7 +87,7 @@ export default async function Article({ params }: { params: Params }) {
 
   const fields = article.fields as any;
   const recommendations = (await fetchRecommendations()).filter(
-    (item) => item.fields.slug !== params.slug
+    (item) => item.fields.slug !== slug
   );
 
   const image = article.fields.image as IContentfulAsset;
